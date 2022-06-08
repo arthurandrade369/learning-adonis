@@ -7,7 +7,13 @@ import AbstractsController from './AbstractsController';
 
 
 export default class AbstractCrudController extends AbstractsController {
-
+    /**
+     * Action to list all Models from database
+     * 
+     * @param model BaseModel
+     * @param ctx HttpContextContract
+     * @returns Promise
+     */
     async listAction(model: typeof BaseModel, ctx: HttpContextContract): Promise<ResponseContract> {
         try {
             const data = await model.all();
@@ -18,6 +24,14 @@ export default class AbstractCrudController extends AbstractsController {
         }
     }
 
+    /**
+     * Action to store data in database
+     * 
+     * @param model BaseModel
+     * @param ctx HttpContextContract
+     * @param validateModel TypedSchema
+     * @returns Promise
+     */
     async createAction<T extends ParsedTypedSchema<TypedSchema>>(model: typeof BaseModel, ctx: HttpContextContract, validateModel: RequestValidatorNode<T>): Promise<LucidRow|ResponseContract> {
         try {
             const entity = new model;
@@ -32,6 +46,13 @@ export default class AbstractCrudController extends AbstractsController {
         }
     }
 
+    /**
+     * Action to show a Object Model from database
+     * 
+     * @param model BaseModel
+     * @param ctx HttpContextContract
+     * @returns Promise
+     */
     async showAction(model: typeof BaseModel, ctx: HttpContextContract): Promise<ResponseContract> {
         try {
             
@@ -43,6 +64,13 @@ export default class AbstractCrudController extends AbstractsController {
         }
     }
 
+    /**
+     * Action to update a Object Model in database
+     * 
+     * @param model BaseModel
+     * @param ctx HttpContextContract
+     * @returns Promise
+     */
     async updateAction(model: typeof BaseModel, ctx: HttpContextContract): Promise<ResponseContract> {
         try {
             const entity = await model.findOrFail(ctx.request.param('id'));
@@ -56,6 +84,13 @@ export default class AbstractCrudController extends AbstractsController {
         }
     }
 
+    /**
+     * Action to delete a Object Model in database
+     * 
+     * @param model BaseModel
+     * @param ctx HttpContextContract
+     * @returns Promise
+     */
     async deleteAction(model: typeof BaseModel, ctx: HttpContextContract): Promise<void|ResponseContract>{
         try {
             const entity = await model.findOrFail(ctx.request.param('id'));

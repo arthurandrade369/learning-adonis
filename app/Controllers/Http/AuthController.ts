@@ -3,6 +3,10 @@ import { ResponseContract } from '@ioc:Adonis/Core/Response';
 import AbstractsController from './AbstractsController';
 
 export default class AuthController extends AbstractsController {
+    /**
+     * @param ctx HttpContextContract
+     * @returns Promise
+     */
     public async login(ctx: HttpContextContract): Promise<ResponseContract> {
         try {
         const email = ctx.request.input('email');
@@ -15,7 +19,11 @@ export default class AuthController extends AbstractsController {
         }
     }
 
-    public async logout(ctx: HttpContextContract) {
+    /**
+     * @param ctx HttpContextContract
+     * @returns Promise
+     */
+    public async logout(ctx: HttpContextContract): Promise<ResponseContract> {
         try {
             await ctx.auth.use('api').revoke();
 
@@ -29,7 +37,13 @@ export default class AuthController extends AbstractsController {
         }
     }
 
-    public async me(ctx: HttpContextContract) {
+    /**
+     * Return the user who is logged
+     * 
+     * @param ctx HttpContextContract
+     * @returns Promise
+     */
+    public async me(ctx: HttpContextContract): Promise<ResponseContract> {
         try {
             const user = await ctx.auth.use('api').authenticate();
             return this.showResponse(ctx, user);

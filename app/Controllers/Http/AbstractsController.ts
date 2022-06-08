@@ -7,15 +7,29 @@ import { ResponseCode } from 'Config/ResponseCode';
 import ExceptionHandler from 'App/Exceptions/Handler';
 
 export default class AbstractsController extends ExceptionHandler {
-    public view(body: any, header: Array<any> = []) {
+    /**
+     * Create a instance of View class
+     * 
+     * @param body any 
+     * @param header array
+     * @returns view View instance
+     */
+    public view(body: any, header: Array<any> = []): View {
         const view = new View(body, header);
         return view;
     }
 
-    public handleView(view: View, contexthttp: HttpContextContract): ResponseContract {
+    /**
+     * Handle a View instance to return a response
+     * 
+     * @param view View
+     * @param ctx HttpContextContract
+     * @returns Promise
+     */
+    public async handleView(view: View, ctx: HttpContextContract): Promise<ResponseContract> {
         const mData = JSON.stringify(view.body)
 
-        const response = contexthttp.response;
+        const response = ctx.response;
 
         response.lazyBody = [mData];
         response.append('Content-Type', view.getContentType());
@@ -23,11 +37,25 @@ export default class AbstractsController extends ExceptionHandler {
         return response;
     }
 
+    /**
+     * Exception response handled "automatically" by framework
+     * 
+     * @param ctx HttpContextContract
+     * @param exception any
+     * @returns Promise
+     */
     public exceptionResponse(ctx: HttpContextContract, exception: any): Promise<ResponseContract> {
         return this.handle(exception, ctx);
     }
 
-    public showResponse(ctx: HttpContextContract, data: Object) {
+    /**
+     * Response function made for handle with Objects itself
+     * 
+     * @param ctx HttpContextContract
+     * @param data Object
+     * @returns Promise
+     */
+    public showResponse(ctx: HttpContextContract, data: Object): Promise<ResponseContract> {
         try {
             const view = this.view(data);
 
@@ -37,7 +65,14 @@ export default class AbstractsController extends ExceptionHandler {
         }
     }
 
-    public listResponde(ctx: HttpContextContract, data: Array<object>) {
+    /**
+     * Response function made for handle with Arrays of Objects
+     * 
+     * @param ctx HttpContextContract
+     * @param data Array
+     * @returns Promise
+     */
+    public listResponde(ctx: HttpContextContract, data: Array<object>): Promise<ResponseContract> {
         try {
             const body = {
                 'iTotalRecords': data.length,
@@ -52,15 +87,27 @@ export default class AbstractsController extends ExceptionHandler {
         }
     }
 
+    /**
+     * @param entity LucidModel
+     * @throws Exception
+     */
     public static errorNotFoundResponse(entity: LucidModel) {
         const message = `${entity.name} Not Found`;
         throw new Exception(message, ResponseCode.HTTP_NOT_FOUND);
     }
 
+    /**
+     * @param message String
+     * @throws Exception
+     */
     public static errorUnProcessableEntityResponse(message: string) {
         throw new Exception(message, ResponseCode.HTTP_UNPROCESSABLE_ENTITY);
     }
 
+    /**
+     * @param entity LucidModel
+     * @throws Exception
+     */
     public static errorInternalServerErrorResponse(entity: LucidModel) {
         const message = `Expected a instance of ${entity.name} class`;
         throw new Exception(message, ResponseCode.HTTP_INTERNAL_SERVER_ERROR);
